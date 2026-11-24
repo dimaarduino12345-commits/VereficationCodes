@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification Codes Telegram — Документация</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    <style>
+        :root {
+            --bg-base: #ffffff;
+            --bg-sidebar: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --accent: #a855f7;
+            --accent-hover: #9333ea;
+            --border: #e2e8f0;
+            --code-bg: #282c34;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Боковое меню */
+        .sidebar {
+            width: 300px;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            padding: 24px 16px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 32px;
+            padding-left: 12px;
+        }
+
+        .logo-badge {
+            background: #000;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-section {
+            margin-bottom: 24px;
+        }
+
+        .nav-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            padding-left: 12px;
+            letter-spacing: 0.6px;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 8px 12px;
+            color: var(--text-main);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: #f1f5f9;
+            color: var(--accent);
+        }
+
+        /* Основной контент */
+        .main-content {
+            margin-left: 300px;
+            padding: 48px 64px;
+            flex: 1;
+            max-width: 1050px;
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-top: 48px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 32px;
+            margin-bottom: 12px;
+        }
+
+        h4 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            color: #475569;
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: #334155;
+        }
+
+        ul, ol {
+            margin-bottom: 16px;
+            padding-left: 24px;
+        }
+
+        li { margin-bottom: 8px; }
+
+        /* Таблицы */
+        table {
+            width: 100%;
+            margin: 16px 0 24px;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td {
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        /* Блоки кода */
+        pre {
+            margin: 16px 0 24px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--code-bg);
+        }
+
+        pre code {
+            padding: 16px 18px !important;
+            display: block;
+            font-size: 13px !important;
+            line-height: 1.55;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+
+        /* Инлайн код */
+        p code, li code, td code {
+            background: #f1f5f9;
+            color: #db2777;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .alert {
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .alert-info {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e3a8a;
+        }
+
+        .alert-warning {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            color: #92400e;
+        }
+
+        .alert-success {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+        }
+
+        .footer {
+            margin-top: 64px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        @media (max-width: 900px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: static; }
+            .main-content { margin-left: 0; padding: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Боковая панель -->
+    <aside class="sidebar">
+        <div class="logo">
+            <span>VC</span>
+            <span class="logo-badge">TELEGRAM</span>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-title">Начало работы</div>
+            <a href="#intro" class="nav-link active">Введение</a>
+            <a href="#how-to-send" class="nav-link">Как отправить код</a>
+            <a href="#certificate" class="nav-link">Сертификат сервиса</a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-title">Протокол</div>
+            <a href="#topics" class="nav-link">MQTT-топики</a>
+            <a href="#payload" class="nav-link">Формат сообщений</a>
+            <a href="#encryption" class="nav-link">Шифрование</a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-title">Примеры кода</div>
+            <a href="#example-js" class="nav-link">JavaScript</a>
+            <a href="#example-python" class="nav-link">Python</a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-title">Справочник</div>
+            <a href="#errors" class="nav-link">Ошибки и ответы</a>
+            <a href="#troubles" class="nav-link">Частые проблемы</a>
+        </div>
+    </aside>
+
+    <!-- Контент -->
+    <main class="main-content">
+        <h1 id="intro">Verification Codes Telegram</h1>
+        <p>Сервис для отправки кодов подтверждения в Telegram через MQTT. Клиент (браузер или Python-скрипт) публикует зашифрованное сообщение в публичный брокер, серверное приложение принимает его и отправляет код нужному пользователю через бота.</p>
+        <p>Клиенту не нужно запускать сервер, хранить токен бота или знать его username. Достаточно действующего сертификата сервиса и доступа к MQTT-брокеру.</p>
+
+        <div class="alert alert-info">
+            <div>
+                <strong>Ключевая особенность:</strong> все сообщения шифруются AES-256-GCM с общим ключом. В MQTT передаётся только шифртекст в base64 — посторонний, подключившись к брокеру, не увидит ни сертификат, ни код, ни username получателя.
+            </div>
+        </div>
+
+        <h2 id="how-to-send">Как отправить код</h2>
+
+        <h3>Готовая HTML-страница</h3>
+        <p>Сохраните код ниже как <code>index.html</code>, откройте через <code>http://localhost</code> или <code>https://</code> (на <code>file://</code> WebCrypto в части браузеров не работает), заполните поля и нажмите «Отправить».</p>
+
+        <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="ru"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+&lt;title&gt;HTML Test Code Generated&lt;/title&gt;
+&lt;style&gt;
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; display: flex;
+    align-items: center; justify-content: center; padding: 16px;
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: #f4f4f4; color: #222;
+  }
+  .card {
+    width: 100%; max-width: 420px; padding: 24px;
+    background: #fff; border: 1px solid #ddd; border-radius: 8px;
+  }
+  h1 { margin: 0 0 16px; font-size: 18px; font-weight: 600; }
+  label { display: block; margin: 8px 0 4px; font-size: 13px; color: #555; }
+  input {
+    width: 100%; padding: 10px 12px; font-size: 15px; font-family: inherit;
+    background: #fff; border: 1px solid #ccc; border-radius: 6px;
+  }
+  input:focus { outline: none; border-color: #4a90e2; }
+  input.cert { font-family: monospace; letter-spacing: 1px; }
+  button {
+    width: 100%; margin-top: 14px; padding: 10px 12px; font-size: 15px;
+    color: #fff; background: #333; border: 0; border-radius: 6px; cursor: pointer;
+  }
+  button:hover { background: #111; }
+  button:disabled { background: #999; cursor: default; }
+  .msg { margin: 12px 0 0; min-height: 18px; font-size: 13px; color: #555; }
+  .msg.ok { color: #1a7f37; }
+  .msg.error { color: #b42318; }
+  .hint { font-size: 12px; color: #888; margin: 6px 0 0; }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;main class="card"&gt;
+  &lt;h1&gt;HTML Test Code Generated&lt;/h1&gt;
+
+  &lt;label for="cert"&gt;Сертификат сервиса&lt;/label&gt;
+  &lt;input id="cert" class="cert" type="text" maxlength="30" placeholder="30 символов" autocomplete="off"&gt;
+
+  &lt;label for="service"&gt;Название сервиса&lt;/label&gt;
+  &lt;input id="service" type="text" placeholder="Например, Сбербанк Онлайн" autocomplete="off"&gt;
+
+  &lt;label for="code"&gt;Код подтверждения&lt;/label&gt;
+  &lt;input id="code" type="text" maxlength="12" placeholder="6 цифр" autocomplete="off"&gt;
+
+  &lt;label for="username"&gt;Username Telegram&lt;/label&gt;
+  &lt;input id="username" type="text" placeholder="@username" autocomplete="off"&gt;
+
+  &lt;button id="sendBtn" type="button"&gt;Отправить&lt;/button&gt;
+  &lt;p class="hint"&gt;Сертификат сохраняется в этом браузере.&lt;/p&gt;
+
+  &lt;p id="msg" class="msg"&gt;&lt;/p&gt;
+&lt;/main&gt;
+
+&lt;script src="https://unpkg.com/mqtt@5/dist/mqtt.min.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+(async () =&gt; {
+  const BROKER_URL     = 'wss://broker.hivemq.com:8884/mqtt';
+  const SHARED_KEY_B64 = 'IEhtOQMjzZWW7+sbqQlAX2OpMq1P7MXFuBIYGiGKD2M=';
+
+  const certEl    = document.getElementById('cert');
+  const serviceEl = document.getElementById('service');
+  const codeEl    = document.getElementById('code');
+  const userEl    = document.getElementById('username');
+  const sendBtn   = document.getElementById('sendBtn');
+  const msgEl     = document.getElementById('msg');
+
+  function setMsg(text, type) {
+    msgEl.textContent = text || '';
+    msgEl.className = 'msg' + (type ? ' ' + type : '');
+  }
+
+  const saved = localStorage.getItem('service_certificate');
+  if (saved) certEl.value = saved;
+  certEl.addEventListener('change', () =&gt; {
+    localStorage.setItem('service_certificate', certEl.value.trim());
+  });
+
+  if (!window.crypto || !window.crypto.subtle) {
+    setMsg('Нужен https:// или http://localhost', 'error');
+    return;
+  }
+
+  const keyBytes  = Uint8Array.from(atob(SHARED_KEY_B64), c =&gt; c.charCodeAt(0));
+  const cryptoKey = await crypto.subtle.importKey(
+    'raw', keyBytes, { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']
+  );
+  const digest = await crypto.subtle.digest('SHA-256', keyBytes);
+  const PREFIX = Array.from(new Uint8Array(digest))
+    .map(b =&gt; b.toString(16).padStart(2, '0')).join('').slice(0, 16);
+
+  const SESSION = crypto.randomUUID
+    ? crypto.randomUUID()
+    : 'sess-' + Math.random().toString(16).slice(2) + Date.now().toString(16);
+
+  const T_SEND     = `${PREFIX}/${SESSION}/send`;
+  const T_SEND_ACK = `${PREFIX}/${SESSION}/send-ack`;
+
+  async function encrypt(obj) {
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const ct = await crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv }, cryptoKey,
+      new TextEncoder().encode(JSON.stringify(obj))
+    );
+    return {
+      iv: btoa(String.fromCharCode(...iv)),
+      data: btoa(String.fromCharCode(...new Uint8Array(ct))),
+    };
+  }
+
+  async function decrypt(envelope) {
+    const iv = Uint8Array.from(atob(envelope.iv), c =&gt; c.charCodeAt(0));
+    const data = Uint8Array.from(atob(envelope.data), c =&gt; c.charCodeAt(0));
+    const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, cryptoKey, data);
+    return JSON.parse(new TextDecoder().decode(pt));
+  }
+
+  let mqttReady = false;
+  const client = mqtt.connect(BROKER_URL, {
+    clientId: ('html-' + SESSION).slice(0, 23),
+    clean: true,
+    reconnectPeriod: 2000,
+    connectTimeout: 10000,
+  });
+
+  client.on('connect', () =&gt; {
+    client.subscribe(T_SEND_ACK, { qos: 1 }, (err) =&gt; {
+      if (err) { setMsg('Ошибка подписки MQTT', 'error'); return; }
+      mqttReady = true;
+      setMsg('Подключено к брокеру');
+    });
+  });
+  client.on('reconnect', () =&gt; setMsg('Переподключение...'));
+  client.on('error', (e) =&gt; setMsg('MQTT: ' + e.message, 'error'));
+
+  client.on('message', async (topic, payload) =&gt; {
+    if (topic !== T_SEND_ACK) return;
+    let data;
+    try {
+      data = await decrypt(JSON.parse(payload.toString()));
+    } catch (e) {
+      setMsg('Не удалось расшифровать ответ', 'error');
+      sendBtn.disabled = false;
+      return;
+    }
+    sendBtn.disabled = false;
+    if (data.ok) setMsg('Код отправлен в Telegram', 'ok');
+    else         setMsg(data.error || 'Ошибка отправки', 'error');
+  });
+
+  sendBtn.addEventListener('click', async () =&gt; {
+    if (!mqttReady) { setMsg('Нет связи с брокером', 'error'); return; }
+
+    const certificate  = certEl.value.trim();
+    const service_name = serviceEl.value.trim();
+    const code         = codeEl.value.trim();
+    const username     = userEl.value.trim();
+
+    if (!certificate)  { setMsg('Введите сертификат сервиса', 'error'); return; }
+    if (certificate.length !== 30) { setMsg('Сертификат должен быть 30 символов', 'error'); return; }
+    if (!service_name) { setMsg('Введите название сервиса', 'error'); return; }
+    if (!code)         { setMsg('Введите код', 'error'); return; }
+    if (!username)     { setMsg('Введите username', 'error'); return; }
+
+    localStorage.setItem('service_certificate', certificate);
+
+    sendBtn.disabled = true;
+    setMsg('Отправка...');
+
+    const env = await encrypt({ certificate, service_name, code, username });
+    client.publish(T_SEND, JSON.stringify(env), { qos: 1 });
+
+    setTimeout(() =&gt; {
+      if (sendBtn.disabled) {
+        sendBtn.disabled = false;
+        setMsg('Сервер не ответил', 'error');
+      }
+    }, 15000);
+  });
+})();
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <div class="alert alert-success">
+            <strong>Как запустить:</strong> сохраните код выше в файл <code>index.html</code>, в папке с ним выполните <code>python -m http.server 8080</code> и откройте <code>http://localhost:8080</code>. Либо разместите на любом статичном хостинге по HTTPS.
+        </div>
+
+        <h4>Что делает эта страница</h4>
+        <ol>
+            <li>Вычисляет <code>PREFIX = SHA256(SHARED_KEY)[:16]</code> для топиков.</li>
+            <li>Генерирует случайный <code>SESSION</code> (UUID) — уникальный для каждого открытия.</li>
+            <li>Подключается к <code>wss://broker.hivemq.com:8884/mqtt</code> и подписывается на <code>{PREFIX}/{SESSION}/send-ack</code>.</li>
+            <li>По кнопке «Отправить» шифрует <code>{certificate, service_name, code, username}</code> через AES-256-GCM и публикует в <code>{PREFIX}/{SESSION}/send</code>.</li>
+            <li>Получает зашифрованный ответ, расшифровывает и показывает «Код отправлен в Telegram» либо текст ошибки.</li>
+        </ol>
+
+        <h2 id="certificate">Сертификат сервиса</h2>
+        <p>Сертификат — строка из ровно <strong>30 символов</strong>, выданная владельцем сервиса через админ-панель. Без него сервер отклоняет любой запрос.</p>
+
+        <h3>Алфавит сертификата</h3>
+        <pre><code>ABCDEFGHIJKLMNOPQRSTUVWXYZ
+abcdefghijklmnopqrstuvwxyz
+0123456789
+!@#$%^&amp;*-_=+</code></pre>
+        <p>Все символы допустимы в любой позиции, длина — строго 30.</p>
+
+        <h3>Правила использования</h3>
+        <p>Сервер возвращает ошибку <code>У сервиса невалидный или истёкший код сертификата</code>, если:</p>
+        <ul>
+            <li>сертификат не существует;</li>
+            <li>сертификат отключён владельцем;</li>
+            <li>истёк срок действия;</li>
+            <li>исчерпан лимит отправок;</li>
+            <li>сертификат не передан в запросе.</li>
+        </ul>
+
+        <h3>Лимиты</h3>
+        <table>
+            <tr><th>Параметр</th><th>Значение</th></tr>
+            <tr><td>Срок действия</td><td>дата, заданная владельцем, либо бессрочно</td></tr>
+            <tr><td>Лимит отправок</td><td>число, заданное владельцем, либо безлимит</td></tr>
+            <tr><td>Анти-спам</td><td>не чаще 1 отправки одному username в 30 секунд</td></tr>
+        </table>
+
+        <h2 id="topics">MQTT-топики</h2>
+        <p>Брокер: <code>wss://broker.hivemq.com:8884/mqtt</code> (браузер) или <code>broker.hivemq.com:1883</code> (Python).</p>
+        <p>Все топики имеют вид:</p>
+        <pre><code>&lt;PREFIX&gt;/&lt;SESSION&gt;/&lt;ACTION&gt;</code></pre>
+
+        <table>
+            <tr><th>Поле</th><th>Описание</th></tr>
+            <tr><td><code>PREFIX</code></td><td><code>SHA256(SHARED_KEY)[:16]</code> — 16 шестнадцатеричных символов, одинаковые у всех клиентов с правильным ключом</td></tr>
+            <tr><td><code>SESSION</code></td><td>Уникальный идентификатор сессии (UUID или случайная строка). Одна сессия = одна пара «запрос — ответ»</td></tr>
+            <tr><td><code>ACTION</code></td><td><code>send</code> — запрос отправки; <code>send-ack</code> — ответ сервера</td></tr>
+        </table>
+
+        <h3>Список топиков</h3>
+        <table>
+            <tr><th>Топик</th><th>Направление</th><th>Назначение</th></tr>
+            <tr><td><code>{PREFIX}/{SESSION}/send</code></td><td>клиент → сервер</td><td>запрос на отправку кода</td></tr>
+            <tr><td><code>{PREFIX}/{SESSION}/send-ack</code></td><td>сервер → клиент</td><td>результат отправки</td></tr>
+        </table>
+
+        <h3>Вычисление PREFIX</h3>
+        <pre><code class="language-python">import base64, hashlib
+
+KEY    = base64.b64decode("IEhtOQMjzZWW7+sbqQlAX2OpMq1P7MXFuBIYGiGKD2M=")
+PREFIX = hashlib.sha256(KEY).hexdigest()[:16]
+# например, "a1b2c3d4e5f60718"</code></pre>
+
+        <h2 id="payload">Формат сообщений</h2>
+        <p>Внутри MQTT передаётся JSON-обёртка с зашифрованными данными:</p>
+        <pre><code class="language-json">{
+  "iv":   "base64(12-байтный случайный IV)",
+  "data": "base64(AES-256-GCM-шифртекст)"
+}</code></pre>
+        <p>Расшифрованный <code>data</code> — обычный JSON. Структура зависит от направления.</p>
+
+        <h3>Запрос отправки (<code>send</code>)</h3>
+        <table>
+            <tr><th>Поле</th><th>Тип</th><th>Обязательно</th><th>Описание</th></tr>
+            <tr><td><code>certificate</code></td><td>string</td><td>да</td><td>30-символьный сертификат</td></tr>
+            <tr><td><code>service_name</code></td><td>string</td><td>да</td><td>название сервиса для текста в Telegram</td></tr>
+            <tr><td><code>code</code></td><td>string</td><td>да</td><td>код подтверждения, до 64 символов</td></tr>
+            <tr><td><code>username</code></td><td>string</td><td>да</td><td><code>@username</code> или <code>username</code></td></tr>
+        </table>
+
+        <h3>Ответ сервера (<code>send-ack</code>)</h3>
+        <table>
+            <tr><th>Поле</th><th>Тип</th><th>Описание</th></tr>
+            <tr><td><code>ok</code></td><td>bool</td><td><code>true</code> — отправлено, <code>false</code> — ошибка</td></tr>
+            <tr><td><code>error</code></td><td>string</td><td>текст ошибки (только при <code>ok: false</code>)</td></tr>
+        </table>
+
+        <h3>Пример расшифрованного запроса</h3>
+        <pre><code class="language-json">{
+  "certificate":  "Ab3!Kx9_Qw*Zt7-Rm2#Lp5+Ns8=Yu4&amp;Hj6@Vd1Eo",
+  "service_name": "Сбербанк Онлайн",
+  "code":         "482913",
+  "username":     "@ivan_petrov"
+}</code></pre>
+
+        <h3>Пример расшифрованного ответа</h3>
+        <pre><code class="language-json">{"ok": true}</code></pre>
+        <pre><code class="language-json">{"ok": false, "error": "У сервиса невалидный или истёкший код сертификата"}</code></pre>
+
+        <h2 id="encryption">Шифрование</h2>
+        <p>Каждое сообщение шифруется AES-256-GCM с общим ключом (32 байта, base64). Ключ уже находится в HTML-файлах и серверном коде.</p>
+
+        <table>
+            <tr><th>Параметр</th><th>Значение</th></tr>
+            <tr><td>Алгоритм</td><td>AES-GCM</td></tr>
+            <tr><td>Длина ключа</td><td>256 бит (32 байта)</td></tr>
+            <tr><td>IV</td><td>12 байт, случайный на каждое сообщение</td></tr>
+            <tr><td>Кодирование IV</td><td>base64</td></tr>
+            <tr><td>Кодирование шифртекста</td><td>base64</td></tr>
+            <tr><td>Тег аутентификации</td><td>встроен в шифртекст (GCM)</td></tr>
+        </table>
+
+        <h3>Шаги шифрования</h3>
+        <ol>
+            <li>Сериализовать JSON-объект в UTF-8 байты.</li>
+            <li>Сгенерировать 12 случайных байт (IV).</li>
+            <li>Зашифровать байты AES-GCM с этим IV.</li>
+            <li>Собрать <code>{"iv": base64(iv), "data": base64(ct)}</code>.</li>
+            <li>Опубликовать в нужный топик.</li>
+        </ol>
+
+        <h3>Расшифровка ответа</h3>
+        <ol>
+            <li>Распарсить JSON, получить <code>iv</code> и <code>data</code>.</li>
+            <li>Декодировать оба из base64.</li>
+            <li>Расшифровать AES-GCM с тем же ключом и IV.</li>
+            <li>Распарсить получившийся JSON.</li>
+        </ol>
+
+        <h2 id="example-js">JavaScript (браузер)</h2>
+        <p>Минимальный пример без UI: подключение, шифрование, публикация и ожидание ответа.</p>
+        <pre><code class="language-javascript">// &lt;script src="https://unpkg.com/mqtt@5/dist/mqtt.min.js"&gt;&lt;/script&gt;
+(async () =&gt; {
+  const BROKER_URL     = "wss://broker.hivemq.com:8884/mqtt";
+  const SHARED_KEY_B64 = "IEhtOQMjzZWW7+sbqQlAX2OpMq1P7MXFuBIYGiGKD2M=";
+
+  const keyBytes  = Uint8Array.from(atob(SHARED_KEY_B64), c =&gt; c.charCodeAt(0));
+  const cryptoKey = await crypto.subtle.importKey(
+    "raw", keyBytes, { name: "AES-GCM" }, false, ["encrypt", "decrypt"]
+  );
+  const digest = await crypto.subtle.digest("SHA-256", keyBytes);
+  const PREFIX = Array.from(new Uint8Array(digest))
+    .map(b =&gt; b.toString(16).padStart(2, "0")).join("").slice(0, 16);
+
+  const SESSION = crypto.randomUUID();
+  const T_SEND     = `${PREFIX}/${SESSION}/send`;
+  const T_SEND_ACK = `${PREFIX}/${SESSION}/send-ack`;
+
+  async function encrypt(obj) {
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const ct = await crypto.subtle.encrypt(
+      { name: "AES-GCM", iv }, cryptoKey,
+      new TextEncoder().encode(JSON.stringify(obj))
+    );
+    return {
+      iv:   btoa(String.fromCharCode(...iv)),
+      data: btoa(String.fromCharCode(...new Uint8Array(ct))),
+    };
+  }
+  async function decrypt(envelope) {
+    const iv   = Uint8Array.from(atob(envelope.iv),   c =&gt; c.charCodeAt(0));
+    const data = Uint8Array.from(atob(envelope.data), c =&gt; c.charCodeAt(0));
+    const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, cryptoKey, data);
+    return JSON.parse(new TextDecoder().decode(pt));
+  }
+
+  const client = mqtt.connect(BROKER_URL, {
+    clientId: ("html-" + SESSION).slice(0, 23),
+  });
+
+  client.on("connect", () =&gt; {
+    client.subscribe(T_SEND_ACK, { qos: 1 }, async () =&gt; {
+      const envelope = await encrypt({
+        certificate:  "Ab3!Kx9_Qw*Zt7-Rm2#Lp5+Ns8=Yu4&amp;Hj6@Vd1Eo",
+        service_name: "Сбербанк Онлайн",
+        code:         "482913",
+        username:     "@ivan_petrov",
+      });
+      client.publish(T_SEND, JSON.stringify(envelope), { qos: 1 });
+    });
+  });
+
+  client.on("message", async (topic, payload) =&gt; {
+    if (topic !== T_SEND_ACK) return;
+    const data = await decrypt(JSON.parse(payload.toString()));
+    if (data.ok) console.log("Отправлено");
+    else         console.error("Ошибка:", data.error);
+  });
+})();</code></pre>
+
+        <h2 id="example-python">Python</h2>
+        <p>Тот же сценарий на Python: <code>paho-mqtt</code> для транспорта, <code>cryptography</code> для AES-256-GCM.</p>
+        <pre><code class="language-python">import base64
+import hashlib
+import json
+import os
+import time
+import uuid
+
+import paho.mqtt.client as mqtt
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+
+BROKER_HOST    = "broker.hivemq.com"
+BROKER_PORT    = 1883
+SHARED_KEY_B64 = "IEhtOQMjzZWW7+sbqQlAX2OpMq1P7MXFuBIYGiGKD2M="
+
+KEY    = base64.b64decode(SHARED_KEY_B64)
+AES    = AESGCM(KEY)
+PREFIX = hashlib.sha256(KEY).hexdigest()[:16]
+
+
+def encrypt(obj: dict) -&gt; dict:
+    iv = os.urandom(12)
+    ct = AES.encrypt(iv, json.dumps(obj).encode(), None)
+    return {
+        "iv":   base64.b64encode(iv).decode(),
+        "data": base64.b64encode(ct).decode(),
+    }
+
+
+def decrypt(envelope: dict) -&gt; dict:
+    iv = base64.b64decode(envelope["iv"])
+    ct = base64.b64decode(envelope["data"])
+    return json.loads(AES.decrypt(iv, ct, None).decode())
+
+
+SESSION    = str(uuid.uuid4())
+T_SEND     = f"{PREFIX}/{SESSION}/send"
+T_SEND_ACK = f"{PREFIX}/{SESSION}/send-ack"
+
+
+def on_connect(client, userdata, flags, rc):
+    client.subscribe(T_SEND_ACK, qos=1)
+
+
+def on_message(client, userdata, msg):
+    data = decrypt(json.loads(msg.payload.decode()))
+    if data.get("ok"):
+        print("Отправлено")
+    else:
+        print("Ошибка:", data.get("error"))
+    client.disconnect()
+
+
+client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1,
+                     client_id=f"cli-{SESSION[:8]}")
+client.on_connect = on_connect
+client.on_message = on_message
+client.connect(BROKER_HOST, BROKER_PORT, 60)
+client.loop_start()
+
+time.sleep(1)
+envelope = encrypt({
+    "certificate":  "Ab3!Kx9_Qw*Zt7-Rm2#Lp5+Ns8=Yu4&amp;Hj6@Vd1Eo",
+    "service_name": "Сбербанк Онлайн",
+    "code":         "482913",
+    "username":     "@ivan_petrov",
+})
+client.publish(T_SEND, json.dumps(envelope), qos=1)
+
+time.sleep(5)
+client.loop_stop()</code></pre>
+
+        <h2 id="errors">Ошибки и ответы</h2>
+        <table>
+            <tr><th>Текст ошибки</th><th>Причина</th></tr>
+            <tr><td><code>У сервиса невалидный или истёкший код сертификата</code></td><td>Сертификат отсутствует, отключён, истёк или исчерпан лимит</td></tr>
+            <tr><td><code>Введите username</code></td><td>Поле <code>username</code> пустое</td></tr>
+            <tr><td><code>Введите название сервиса</code></td><td>Поле <code>service_name</code> пустое</td></tr>
+            <tr><td><code>Введите код</code></td><td>Поле <code>code</code> пустое</td></tr>
+            <tr><td><code>Код слишком длинный</code></td><td><code>code</code> длиннее 64 символов</td></tr>
+            <tr><td><code>Подождите 30 секунд</code></td><td>Слишком частая отправка одному username</td></tr>
+            <tr><td><code>chat not found</code></td><td>Получатель не нажимал <code>/start</code> у бота или username неверен</td></tr>
+            <tr><td><code>Forbidden: bot was blocked by the user</code></td><td>Пользователь заблокировал бота</td></tr>
+        </table>
+
+        <div class="alert alert-warning">
+            <strong>Нет ответа вообще?</strong> Проверьте <code>PREFIX</code>, <code>SESSION</code> и корректность JSON. Убедитесь, что клиент подписан на <code>send-ack</code> до публикации <code>send</code>. Проверьте доступ к <code>wss://broker.hivemq.com:8884/mqtt</code>.
+        </div>
+
+        <h2 id="troubles">Частые проблемы</h2>
+
+        <h3>Браузер пишет «Нужен https:// или http://localhost»</h3>
+        <p>WebCrypto (<code>crypto.subtle</code>) не работает на <code>file://</code> в части браузеров. Поднимите статичный сервер в папке с HTML:</p>
+        <pre><code class="language-bash">python -m http.server 8080</code></pre>
+        <p>и откройте <code>http://localhost:8080</code>.</p>
+
+        <h3>Ответ не приходит</h3>
+        <ul>
+            <li><code>PREFIX</code> в клиенте совпадает с тем, на который подписан сервер (одинаковый ключ → одинаковый хеш, должно совпасть автоматически).</li>
+            <li><code>SESSION</code> в топике запроса и топике подписки одинаковый.</li>
+            <li>Клиент подписан на <code>send-ack</code> до публикации <code>send</code>.</li>
+            <li>Брокер доступен: соединение к <code>wss://broker.hivemq.com:8884/mqtt</code>.</li>
+        </ul>
+
+        <h3>Приходит ошибка о невалидном сертификате</h3>
+        <ul>
+            <li>Проверьте, что сертификат ровно 30 символов и скопирован без пробелов.</li>
+            <li>Проверьте, что владелец не отключил или не удалил сертификат.</li>
+            <li>Проверьте срок действия и оставшийся лимит отправок у владельца.</li>
+        </ul>
+
+        <h3>Сообщение приходит, но кода в нём нет</h3>
+        <p>Скорее всего, поле <code>code</code> отправлено пустым. Проверьте, что в расшифрованном JSON поле <code>code</code> содержит именно то, что вы ожидаете.</p>
+
+        <h3>«Forbidden: bot can't initiate conversation with a user»</h3>
+        <p>Получатель никогда не открывал чат с ботом. Попросите его нажать <code>/start</code> у бота и повторите отправку.</p>
+
+        <h3>«chat not found»</h3>
+        <ul>
+            <li>Пользователь не нажимал <code>/start</code> в последние часы (поиск <code>chat_id</code> через <code>getUpdates</code> не нашёл его).</li>
+            <li>Username введён с ошибкой.</li>
+            <li>Пользователь скрыл username в настройках приватности.</li>
+        </ul>
+
+        <div class="footer">
+            Verification Codes Telegram © 2026. Документация для разработчиков.
+        </div>
+    </main>
+
+</body>
+</html>
