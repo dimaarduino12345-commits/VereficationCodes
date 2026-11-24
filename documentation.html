@@ -32,7 +32,6 @@
             line-height: 1.6;
         }
 
-        /* Боковое меню */
         .sidebar {
             width: 300px;
             background-color: var(--bg-sidebar);
@@ -62,9 +61,7 @@
             letter-spacing: 0.5px;
         }
 
-        .nav-section {
-            margin-bottom: 24px;
-        }
+        .nav-section { margin-bottom: 24px; }
 
         .nav-title {
             font-size: 11px;
@@ -92,7 +89,6 @@
             color: var(--accent);
         }
 
-        /* Основной контент */
         .main-content {
             margin-left: 300px;
             padding: 48px 64px;
@@ -131,19 +127,10 @@
             color: #475569;
         }
 
-        p {
-            margin-bottom: 16px;
-            color: #334155;
-        }
-
-        ul, ol {
-            margin-bottom: 16px;
-            padding-left: 24px;
-        }
-
+        p { margin-bottom: 16px; color: #334155; }
+        ul, ol { margin-bottom: 16px; padding-left: 24px; }
         li { margin-bottom: 8px; }
 
-        /* Таблицы */
         table {
             width: 100%;
             margin: 16px 0 24px;
@@ -156,13 +143,8 @@
             text-align: left;
             vertical-align: top;
         }
-        th {
-            background: #f8fafc;
-            font-weight: 600;
-            color: #334155;
-        }
+        th { background: #f8fafc; font-weight: 600; color: #334155; }
 
-        /* Блоки кода */
         pre {
             margin: 16px 0 24px;
             border-radius: 12px;
@@ -177,12 +159,8 @@
             line-height: 1.55;
         }
 
-        code {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-        }
+        code { font-family: 'JetBrains Mono', monospace; font-size: 14px; }
 
-        /* Инлайн код */
         p code, li code, td code {
             background: #f1f5f9;
             color: #db2777;
@@ -234,7 +212,6 @@
 </head>
 <body>
 
-    <!-- Боковая панель -->
     <aside class="sidebar">
         <div class="logo">
             <span>VC</span>
@@ -252,6 +229,7 @@
             <div class="nav-title">Протокол</div>
             <a href="#topics" class="nav-link">MQTT-топики</a>
             <a href="#payload" class="nav-link">Формат сообщений</a>
+            <a href="#language" class="nav-link">Язык сообщения</a>
             <a href="#encryption" class="nav-link">Шифрование</a>
         </div>
 
@@ -268,7 +246,6 @@
         </div>
     </aside>
 
-    <!-- Контент -->
     <main class="main-content">
         <h1 id="intro">Verification Codes Telegram</h1>
         <p>Сервис для отправки кодов подтверждения в Telegram через MQTT. Клиент (браузер или Python-скрипт) публикует зашифрованное сообщение в публичный брокер, серверное приложение принимает его и отправляет код нужному пользователю через бота.</p>
@@ -283,7 +260,7 @@
         <h2 id="how-to-send">Как отправить код</h2>
 
         <h3>Готовая HTML-страница</h3>
-        <p>Сохраните код ниже как <code>index.html</code>, откройте через <code>http://localhost</code> или <code>https://</code> (на <code>file://</code> WebCrypto в части браузеров не работает), заполните поля и нажмите «Отправить».</p>
+        <p>Сохраните код ниже как <code>index.html</code>, откройте через <code>http://localhost</code> или <code>https://</code> (на <code>file://</code> WebCrypto в части браузеров не работает), заполните поля и нажмите «Отправить». Язык сообщения в Telegram выбирается в селекте — браузер автоматически подставит подходящий по локали.</p>
 
         <pre><code class="language-html">&lt;!DOCTYPE html&gt;
 &lt;html lang="ru"&gt;
@@ -305,11 +282,11 @@
   }
   h1 { margin: 0 0 16px; font-size: 18px; font-weight: 600; }
   label { display: block; margin: 8px 0 4px; font-size: 13px; color: #555; }
-  input {
+  input, select {
     width: 100%; padding: 10px 12px; font-size: 15px; font-family: inherit;
     background: #fff; border: 1px solid #ccc; border-radius: 6px;
   }
-  input:focus { outline: none; border-color: #4a90e2; }
+  input:focus, select:focus { outline: none; border-color: #4a90e2; }
   input.cert { font-family: monospace; letter-spacing: 1px; }
   button {
     width: 100%; margin-top: 14px; padding: 10px 12px; font-size: 15px;
@@ -339,6 +316,13 @@
   &lt;label for="username"&gt;Username Telegram&lt;/label&gt;
   &lt;input id="username" type="text" placeholder="@username" autocomplete="off"&gt;
 
+  &lt;label for="lang"&gt;Язык сообщения в Telegram&lt;/label&gt;
+  &lt;select id="lang"&gt;
+    &lt;option value="ru"&gt;Русский&lt;/option&gt;
+    &lt;option value="en"&gt;English&lt;/option&gt;
+    &lt;option value="uk"&gt;Українська&lt;/option&gt;
+  &lt;/select&gt;
+
   &lt;button id="sendBtn" type="button"&gt;Отправить&lt;/button&gt;
   &lt;p class="hint"&gt;Сертификат сохраняется в этом браузере.&lt;/p&gt;
 
@@ -350,11 +334,13 @@
 (async () =&gt; {
   const BROKER_URL     = 'wss://broker.hivemq.com:8884/mqtt';
   const SHARED_KEY_B64 = 'IEhtOQMjzZWW7+sbqQlAX2OpMq1P7MXFuBIYGiGKD2M=';
+  const SUPPORTED_LANGS = ['ru', 'en', 'uk'];
 
   const certEl    = document.getElementById('cert');
   const serviceEl = document.getElementById('service');
   const codeEl    = document.getElementById('code');
   const userEl    = document.getElementById('username');
+  const langEl    = document.getElementById('lang');
   const sendBtn   = document.getElementById('sendBtn');
   const msgEl     = document.getElementById('msg');
 
@@ -362,6 +348,9 @@
     msgEl.textContent = text || '';
     msgEl.className = 'msg' + (type ? ' ' + type : '');
   }
+
+  const detected = (navigator.language || 'ru').slice(0, 2).toLowerCase();
+  if (SUPPORTED_LANGS.includes(detected)) langEl.value = detected;
 
   const saved = localStorage.getItem('service_certificate');
   if (saved) certEl.value = saved;
@@ -448,6 +437,7 @@
     const service_name = serviceEl.value.trim();
     const code         = codeEl.value.trim();
     const username     = userEl.value.trim();
+    const language     = langEl.value || 'ru';
 
     if (!certificate)  { setMsg('Введите сертификат сервиса', 'error'); return; }
     if (certificate.length !== 30) { setMsg('Сертификат должен быть 30 символов', 'error'); return; }
@@ -460,7 +450,7 @@
     sendBtn.disabled = true;
     setMsg('Отправка...');
 
-    const env = await encrypt({ certificate, service_name, code, username });
+    const env = await encrypt({ certificate, service_name, code, username, language });
     client.publish(T_SEND, JSON.stringify(env), { qos: 1 });
 
     setTimeout(() =&gt; {
@@ -484,7 +474,7 @@
             <li>Вычисляет <code>PREFIX = SHA256(SHARED_KEY)[:16]</code> для топиков.</li>
             <li>Генерирует случайный <code>SESSION</code> (UUID) — уникальный для каждого открытия.</li>
             <li>Подключается к <code>wss://broker.hivemq.com:8884/mqtt</code> и подписывается на <code>{PREFIX}/{SESSION}/send-ack</code>.</li>
-            <li>По кнопке «Отправить» шифрует <code>{certificate, service_name, code, username}</code> через AES-256-GCM и публикует в <code>{PREFIX}/{SESSION}/send</code>.</li>
+            <li>По кнопке «Отправить» шифрует <code>{certificate, service_name, code, username, language}</code> через AES-256-GCM и публикует в <code>{PREFIX}/{SESSION}/send</code>.</li>
             <li>Получает зашифрованный ответ, расшифровывает и показывает «Код отправлен в Telegram» либо текст ошибки.</li>
         </ol>
 
@@ -499,7 +489,7 @@ abcdefghijklmnopqrstuvwxyz
         <p>Все символы допустимы в любой позиции, длина — строго 30.</p>
 
         <h3>Правила использования</h3>
-        <p>Сервер возвращает ошибку <code>У сервиса невалидный или истёкший код сертификата</code>, если:</p>
+        <p>Сервер возвращает ошибку о невалидном или истёкшем сертификате, если:</p>
         <ul>
             <li>сертификат не существует;</li>
             <li>сертификат отключён владельцем;</li>
@@ -557,6 +547,7 @@ PREFIX = hashlib.sha256(KEY).hexdigest()[:16]
             <tr><td><code>service_name</code></td><td>string</td><td>да</td><td>название сервиса для текста в Telegram</td></tr>
             <tr><td><code>code</code></td><td>string</td><td>да</td><td>код подтверждения, до 64 символов</td></tr>
             <tr><td><code>username</code></td><td>string</td><td>да</td><td><code>@username</code> или <code>username</code></td></tr>
+            <tr><td><code>language</code></td><td>string</td><td>нет</td><td><code>ru</code>, <code>en</code> или <code>uk</code>. По умолчанию <code>ru</code></td></tr>
         </table>
 
         <h3>Ответ сервера (<code>send-ack</code>)</h3>
@@ -571,12 +562,47 @@ PREFIX = hashlib.sha256(KEY).hexdigest()[:16]
   "certificate":  "Ab3!Kx9_Qw*Zt7-Rm2#Lp5+Ns8=Yu4&amp;Hj6@Vd1Eo",
   "service_name": "Сбербанк Онлайн",
   "code":         "482913",
-  "username":     "@ivan_petrov"
+  "username":     "@ivan_petrov",
+  "language":     "en"
 }</code></pre>
 
         <h3>Пример расшифрованного ответа</h3>
         <pre><code class="language-json">{"ok": true}</code></pre>
+        <pre><code class="language-json">{"ok": false, "error": "The service has an invalid or expired certificate code"}</code></pre>
+
+        <h2 id="language">Язык сообщения</h2>
+        <p>Опциональное поле <code>language</code> в запросе <code>send</code> определяет язык текста в Telegram и подпись кнопки «Скопировать код». Если поле отсутствует, пустое или содержит неизвестное значение — используется <code>ru</code>.</p>
+
+        <table>
+            <tr><th>Код</th><th>Язык</th><th>Текст сообщения</th><th>Кнопка</th></tr>
+            <tr>
+                <td><code>ru</code></td>
+                <td>Русский</td>
+                <td>Ваш код для входа в {service_name} — никому его не показывайте и не сообщайте, даже если вас попросят от лица сотрудника {service_name}</td>
+                <td>Скопировать код</td>
+            </tr>
+            <tr>
+                <td><code>en</code></td>
+                <td>English</td>
+                <td>Your login code for {service_name} — do not show or share it with anyone, even if someone asks on behalf of {service_name}</td>
+                <td>Copy code</td>
+            </tr>
+            <tr>
+                <td><code>uk</code></td>
+                <td>Українська</td>
+                <td>Ваш код для входу в {service_name} — нікому його не показуйте та не повідомляйте, навіть якщо вас попросять від імені співробітника {service_name}</td>
+                <td>Скопіювати код</td>
+            </tr>
+        </table>
+
+        <p>Тексты ошибок в ответе <code>send-ack</code> тоже приходят на выбранном языке. Примеры для невалидного сертификата:</p>
         <pre><code class="language-json">{"ok": false, "error": "У сервиса невалидный или истёкший код сертификата"}</code></pre>
+        <pre><code class="language-json">{"ok": false, "error": "The service has an invalid or expired certificate code"}</code></pre>
+        <pre><code class="language-json">{"ok": false, "error": "У сервісу невалідний або прострочений код сертифіката"}</code></pre>
+
+        <div class="alert alert-info">
+            <strong>Авто-выбор языка в HTML:</strong> в готовой странице из раздела «Как отправить код» значение селекта подставляется по <code>navigator.language</code> (например, <code>en-US</code> → <code>en</code>, <code>uk-UA</code> → <code>uk</code>, <code>ru-RU</code> → <code>ru</code>). Пользователь может поменять язык вручную перед отправкой.
+        </div>
 
         <h2 id="encryption">Шифрование</h2>
         <p>Каждое сообщение шифруется AES-256-GCM с общим ключом (32 байта, base64). Ключ уже находится в HTML-файлах и серверном коде.</p>
@@ -609,7 +635,7 @@ PREFIX = hashlib.sha256(KEY).hexdigest()[:16]
         </ol>
 
         <h2 id="example-js">JavaScript (браузер)</h2>
-        <p>Минимальный пример без UI: подключение, шифрование, публикация и ожидание ответа.</p>
+        <p>Минимальный пример без UI: подключение, шифрование, публикация и ожидание ответа. Язык указан как <code>en</code> — поменяйте на нужный.</p>
         <pre><code class="language-javascript">// &lt;script src="https://unpkg.com/mqtt@5/dist/mqtt.min.js"&gt;&lt;/script&gt;
 (async () =&gt; {
   const BROKER_URL     = "wss://broker.hivemq.com:8884/mqtt";
@@ -653,9 +679,10 @@ PREFIX = hashlib.sha256(KEY).hexdigest()[:16]
     client.subscribe(T_SEND_ACK, { qos: 1 }, async () =&gt; {
       const envelope = await encrypt({
         certificate:  "Ab3!Kx9_Qw*Zt7-Rm2#Lp5+Ns8=Yu4&amp;Hj6@Vd1Eo",
-        service_name: "Сбербанк Онлайн",
+        service_name: "My Service",
         code:         "482913",
         username:     "@ivan_petrov",
+        language:     "en",
       });
       client.publish(T_SEND, JSON.stringify(envelope), { qos: 1 });
     });
@@ -664,13 +691,13 @@ PREFIX = hashlib.sha256(KEY).hexdigest()[:16]
   client.on("message", async (topic, payload) =&gt; {
     if (topic !== T_SEND_ACK) return;
     const data = await decrypt(JSON.parse(payload.toString()));
-    if (data.ok) console.log("Отправлено");
-    else         console.error("Ошибка:", data.error);
+    if (data.ok) console.log("Sent");
+    else         console.error("Error:", data.error);
   });
 })();</code></pre>
 
         <h2 id="example-python">Python</h2>
-        <p>Тот же сценарий на Python: <code>paho-mqtt</code> для транспорта, <code>cryptography</code> для AES-256-GCM.</p>
+        <p>Тот же сценарий на Python: <code>paho-mqtt</code> для транспорта, <code>cryptography</code> для AES-256-GCM. Язык указан как <code>uk</code> — поменяйте на нужный.</p>
         <pre><code class="language-python">import base64
 import hashlib
 import json
@@ -733,9 +760,10 @@ client.loop_start()
 time.sleep(1)
 envelope = encrypt({
     "certificate":  "Ab3!Kx9_Qw*Zt7-Rm2#Lp5+Ns8=Yu4&amp;Hj6@Vd1Eo",
-    "service_name": "Сбербанк Онлайн",
+    "service_name": "Мій Сервіс",
     "code":         "482913",
     "username":     "@ivan_petrov",
+    "language":     "uk",
 })
 client.publish(T_SEND, json.dumps(envelope), qos=1)
 
@@ -743,16 +771,56 @@ time.sleep(5)
 client.loop_stop()</code></pre>
 
         <h2 id="errors">Ошибки и ответы</h2>
+        <div class="alert alert-info">
+            <strong>Язык ошибок:</strong> тексты ошибок приходят на языке, указанном в поле <code>language</code> запроса. Если поле не передано — на русском.
+        </div>
+
         <table>
-            <tr><th>Текст ошибки</th><th>Причина</th></tr>
-            <tr><td><code>У сервиса невалидный или истёкший код сертификата</code></td><td>Сертификат отсутствует, отключён, истёк или исчерпан лимит</td></tr>
-            <tr><td><code>Введите username</code></td><td>Поле <code>username</code> пустое</td></tr>
-            <tr><td><code>Введите название сервиса</code></td><td>Поле <code>service_name</code> пустое</td></tr>
-            <tr><td><code>Введите код</code></td><td>Поле <code>code</code> пустое</td></tr>
-            <tr><td><code>Код слишком длинный</code></td><td><code>code</code> длиннее 64 символов</td></tr>
-            <tr><td><code>Подождите 30 секунд</code></td><td>Слишком частая отправка одному username</td></tr>
-            <tr><td><code>chat not found</code></td><td>Получатель не нажимал <code>/start</code> у бота или username неверен</td></tr>
-            <tr><td><code>Forbidden: bot was blocked by the user</code></td><td>Пользователь заблокировал бота</td></tr>
+            <tr><th>RU</th><th>EN</th><th>UK</th><th>Причина</th></tr>
+            <tr>
+                <td>У сервиса невалидный или истёкший код сертификата</td>
+                <td>The service has an invalid or expired certificate code</td>
+                <td>У сервісу невалідний або прострочений код сертифіката</td>
+                <td>Сертификат отсутствует, отключён, истёк или исчерпан лимит</td>
+            </tr>
+            <tr>
+                <td>Введите username</td>
+                <td>Enter username</td>
+                <td>Введіть username</td>
+                <td>Поле <code>username</code> пустое</td>
+            </tr>
+            <tr>
+                <td>Введите название сервиса</td>
+                <td>Enter service name</td>
+                <td>Введіть назву сервісу</td>
+                <td>Поле <code>service_name</code> пустое</td>
+            </tr>
+            <tr>
+                <td>Введите код</td>
+                <td>Enter code</td>
+                <td>Введіть код</td>
+                <td>Поле <code>code</code> пустое</td>
+            </tr>
+            <tr>
+                <td>Код слишком длинный</td>
+                <td>Code is too long</td>
+                <td>Код занадто довгий</td>
+                <td><code>code</code> длиннее 64 символов</td>
+            </tr>
+            <tr>
+                <td>Подождите 30 секунд</td>
+                <td>Wait 30 seconds</td>
+                <td>Зачекайте 30 секунд</td>
+                <td>Слишком частая отправка одному username</td>
+            </tr>
+            <tr>
+                <td colspan="3"><code>chat not found</code></td>
+                <td>Получатель не нажимал <code>/start</code> у бота или username неверен</td>
+            </tr>
+            <tr>
+                <td colspan="3"><code>Forbidden: bot was blocked by the user</code></td>
+                <td>Пользователь заблокировал бота</td>
+            </tr>
         </table>
 
         <div class="alert alert-warning">
@@ -792,6 +860,13 @@ client.loop_stop()</code></pre>
             <li>Пользователь не нажимал <code>/start</code> в последние часы (поиск <code>chat_id</code> через <code>getUpdates</code> не нашёл его).</li>
             <li>Username введён с ошибкой.</li>
             <li>Пользователь скрыл username в настройках приватности.</li>
+        </ul>
+
+        <h3>Приходит сообщение не на том языке</h3>
+        <ul>
+            <li>Проверьте значение поля <code>language</code> в расшифрованном запросе: должно быть <code>ru</code>, <code>en</code> или <code>uk</code>.</li>
+            <li>Если поле отсутствует или содержит другое значение, сервер использует <code>ru</code>.</li>
+            <li>В готовой HTML-странице авто-выбор идёт по <code>navigator.language</code>. Если браузер отдаёт неподдерживаемый код (например, <code>de</code>), используется <code>ru</code>.</li>
         </ul>
 
         <div class="footer">
